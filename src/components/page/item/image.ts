@@ -19,6 +19,5 @@ export class ImageComponent extends BaseComponent<HTMLElement> {
       ".image__title"
     )! as HTMLParagraphElement;
     titleElement.textContent = title;
-    console.log(1);
   }
 }
