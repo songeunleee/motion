@@ -6,18 +6,26 @@ export interface Composable {
 
 type onCloseLitsenr = () => void;
 
-class PageItemComponent
+interface SectionContainer extends Component, Composable {
+  setOnCloseLitsner(listner: onCloseLitsenr): void;
+}
+
+type SectionContarnerConstructor = {
+  new (): SectionContainer;
+};
+export class PageItemComponent
   extends BaseComponent<HTMLElement>
-  implements Composable
+  implements SectionContainer
 {
   private closeListner?: onCloseLitsenr;
+
   constructor() {
     super(`<li class="page-item">
     <section class="page-item__body"></section>
     <div class="page-item__controls">
-      <button class="close">&times;</button>
+    <button class="close">&times;</button>
     </div>
-  </li>`);
+    </li>`);
     const closeBtn = this.element.querySelector(".close") as HTMLButtonElement;
     closeBtn.onclick = () => {
       this.closeListner && this.closeListner();
@@ -38,12 +46,12 @@ export class PageComponent
   extends BaseComponent<HTMLUListElement>
   implements Composable
 {
-  constructor() {
+  constructor(private pageItemConstructor: SectionContarnerConstructor) {
     super('<ul class="page"></ul>');
   }
 
   addChild(section: Component) {
-    const item = new PageItemComponent();
+    const item = new this.pageItemConstructor();
     item.addChild(section);
     item.attachTo(this.element, "beforeend");
     item.setOnCloseLitsner(() => {
